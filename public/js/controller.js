@@ -1,10 +1,38 @@
 $(document).ready(function(){
+
+    //grab all the frontend controller variables
+    var left = $('.left');
+    var right = $('.right');
+    var neutral = $('.neutral');
 	
 	//Grab the socket connection
 	var socket = io.connect(window.location.hostname);
 
 	socket.on('democracy',function(data){
+        //update the width of the frontend
+        left.css('width',data.percentage.left + "%");
+        right.css('width',data.percentage.right + "%");
+        neutral.css('width',data.percentage.neutral + "%");
 
+        //check if they are grater than 50% and add most voted
+
+        if (data.currentState.direction == -1 ) {
+            left.addClass('most-voted');
+        } else {
+            left.removeClass('most-voted');
+        }
+
+        if (data.currentState.direction == 1 ) {
+            right.addClass('most-voted');
+        } else {
+            right.removeClass('most-voted');
+        }
+
+        if (data.currentState.direction == 0 ) {
+            neutral.addClass('most-voted');
+        } else {
+            neutral.removeClass('most-voted');
+        }
 	});
 
 	var keys = {

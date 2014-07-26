@@ -28,12 +28,16 @@ html, body {
 }
 
 .left, .neutral, .right {
-    width: 33%;
     float:left;
     padding: 45px 0;
     overflow:hidden;
     background: #efefef;
     text-align:center;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    transition: all 0.3s;
 }
 
 .most-voted {
