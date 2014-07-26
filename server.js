@@ -46,6 +46,8 @@ io.sockets.on('connection', function(socket){
         
         players[socket.id].keys = data;
         updateKeys();
+        
+        console.log(data.direction);
     });
 
     socket.on('disconnect', function(){
@@ -88,20 +90,20 @@ function updateKeys(){
     
     if(leftCount == neutralCount){
           if(leftCount == rightCount){
-                console.log('l = n = r');
+                //console.log('l = n = r');
                 newState.direction = 0;
         } else {
                 if(rightCount> leftCount){
-                    console.log('l = n < r');
+                    //console.log('l = n < r');
                     newState.direction = 0;
                 } else if(rightCount < leftCount){
-                    console.log('l = n > r');
+                    //console.log('l = n > r');
                     newState.direction = 0;
                 }    
             } 
     } else if(leftCount == rightCount){
             if(neutralCount > leftCount){
-                console.log('l = r < n');
+                //console.log('l = r < n');
                 newState.direction = 0;
             } else if(neutralCount < leftCount){
                 console.log('l = r > n');
@@ -109,26 +111,26 @@ function updateKeys(){
             }    
     } else if(neutralCount == rightCount) {
              if(leftCount > neutralCount){
-                console.log('n = r < l');
+                //console.log('n = r < l');
                  newState.direction = 0;
             } else if(leftCount < neutralCount){
-                console.log('n = r > l');
+                //console.log('n = r > l');
                 newState.direction = 0;
             }     
     } else {
             if(leftCount > neutralCount){
                 if(leftCount > rightCount){
-                    console.log('l > n & r');
+                    //console.log('l > n & r');
                     newState.direction = -1;
                 }
             } else if(neutralCount > leftCount){
                 if(neutralCount > rightCount){
-                    console.log('n > l & r');
+                    //console.log('n > l & r');
                     newState.direction = 0;
                 }
             } else if(rightCount > leftCount){
                 if(rightCount > neutralCount){
-                   console.log('r > l & n');
+                   //console.log('r > l & n');
                     newState.direction = 1;
                 }
             }
@@ -137,7 +139,8 @@ function updateKeys(){
     newState.accelerate = (accelerateCount / playerCount) >= threshold ? true : false;
     newState.drift = (driftCount / playerCount) >= threshold ? true : false;
     
-    checkKeys();
+    //checkKeys();
+    
     
     // create object ready for sending to clients
     var democracy = {

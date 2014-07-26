@@ -10,7 +10,7 @@ $(document).ready(function(){
 	var keys = {
                 'direction': 0,
                 'accelerate': false,
-                'drift': false;
+                'drift': false
             };
 
     var alpha = 0,
@@ -33,13 +33,17 @@ $(document).ready(function(){
 			else if (orient == 180) percent = ((((-gamma+90))/180)*200)-100;
 			else {percent = ((((gamma+90))/180)*200)-100;}
 
-            if(percent < -3.5){
+            var threshold = 15;
+        
+            if(percent < -threshold){
             	 keys.direction = -1;
-            } else if (percent > 3.5) {
+            } else if (percent > threshold) {
             	keys.direction = 1;
             } else {
             	keys.direction = 0;
             }
+        
+            $('body').html('<h1>'+keys.direction+'</h1>');
         }
 
     function loop() {
