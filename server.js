@@ -19,19 +19,14 @@ var playerCount = 0;
 var players = {};
 
 var currentState = {
-    "up":false,
-    "down":false,
-    "left":false,
-    "right":false,
-    "a":false,
-    "b":false,
-    "start":false,
-    "select":false
+    "direction":0,
+    "accelerate":false,
+    "drift":false
 };
 
 var newState = {};
 
-var threshold = .51;
+var threshold = .50;
 
 io.sockets.on('connection', function(socket){
         
@@ -41,14 +36,9 @@ io.sockets.on('connection', function(socket){
     
     players[socket.id] = {
         keys:{
-            "up":false,
-            "down":false,
-            "left":false,
-            "right":false,
-            "a":false,
-            "b":false,
-            "start":false,
-            "select":false
+            "direction":0,
+            "accelerate":false,
+            "drift":false
         }
     };
 
@@ -69,41 +59,83 @@ io.sockets.on('connection', function(socket){
 
 function updateKeys(){
     // set counts to 0
-    var upCount = 0;
-    var downCount = 0;
     var leftCount = 0;
+    var neutralCount = 0;
     var rightCount = 0;
-    var aCount = 0;
-    var bCount = 0;
-    var startCount = 0;
-    var selectCount = 0;
+    var accelerateCount = 0;
+    var driftCount = 0;
         
     // then count each player pressing a button
     for ( var id in players) {
             
         var player = players[id];
             
-        if(player.keys.up) upCount++;
-        if(player.keys.down) downCount++;
-        if(player.keys.left) leftCount++;
-        if(player.keys.right) rightCount++;
-        if(player.keys.a) aCount++;
-        if(player.keys.b) bCount++;
-        if(player.keys.start) startCount++;
-        if(player.keys.select) selectCount++;
+        if(player.keys.direction == -1) {
+            leftCount++
+        } else if(player.keys.direction == 0){
+            neutralCount++
+        } else if(player.keys.direction == 1){
+            rightCount++
+        }
+        
+        if(player.keys.accelerate) accelerateCount++;
+        
+        if(player.keys.drift) driftCount++;
                 	
     }
     
     newState = {};
-        
-    newState.up = (upCount / playerCount) >= threshold ? true : false;
-    newState.down = (downCount / playerCount) >= threshold ? true : false;
-    newState.left = (leftCount / playerCount) >= threshold ? true : false;
-    newState.right =(rightCount / playerCount) >= threshold ? true : false;
-    newState.a = (aCount / playerCount) >= threshold ? true : false;
-    newState.b = (bCount / playerCount) >= threshold ? true : false;
-    newState.start = (startCount / playerCount) >= threshold ? true : false;
-    newState.select = (selectCount / playerCount) >= threshold ? true : false;
+    
+    if(leftCount == neutralCount){
+          if(leftCount == rightCount){
+                console.log('l = n = r');
+                newState.direction = 0;
+        } else {
+                if(rightCount> leftCount){
+                    console.log('l = n < r');
+                    newState.direction = 0;
+                } else if(rightCount < leftCount){
+                    console.log('l = n > r');
+                    newState.direction = 0;
+                }    
+            } 
+    } else if(leftCount == rightCount){
+            if(neutralCount > leftCount){
+                console.log('l = r < n');
+                newState.direction = 0;
+            } else if(neutralCount < leftCount){
+                console.log('l = r > n');
+                newState.direction = 0;
+            }    
+    } else if(neutralCount == rightCount) {
+             if(leftCount > neutralCount){
+                console.log('n = r < l');
+                 newState.direction = 0;
+            } else if(leftCount < neutralCount){
+                console.log('n = r > l');
+                newState.direction = 0;
+            }     
+    } else {
+            if(leftCount > neutralCount){
+                if(leftCount > rightCount){
+                    console.log('l > n & r');
+                    newState.direction = -1;
+                }
+            } else if(neutralCount > leftCount){
+                if(neutralCount > rightCount){
+                    console.log('n > l & r');
+                    newState.direction = 0;
+                }
+            } else if(rightCount > leftCount){
+                if(rightCount > neutralCount){
+                   console.log('r > l & n');
+                    newState.direction = 1;
+                }
+            }
+    }
+    
+    newState.accelerate = (accelerateCount / playerCount) >= threshold ? true : false;
+    newState.drift = (driftCount / playerCount) >= threshold ? true : false;
     
     checkKeys();
     
@@ -111,14 +143,11 @@ function updateKeys(){
     var democracy = {
         	"playerCount": playerCount,
         	"percentage":{
-                "up":Math.round((upCount / playerCount)*100),
-                "down":Math.round((downCount / playerCount)*100),
                 "left":Math.round((leftCount / playerCount)*100),
+                "neutral":Math.round((neutralCount / playerCount)*100),
                 "right":Math.round((rightCount / playerCount)*100),
-                "a":Math.round((aCount / playerCount)*100),
-                "b":Math.round((bCount / playerCount)*100),
-                "start":Math.round((startCount / playerCount)*100),
-                "select":Math.round((selectCount / playerCount)*100)
+                "accelerate":Math.round((accelerateCount / playerCount)*100),
+                "drift":Math.round((driftCount / playerCount)*100)
             }
         }
         
@@ -132,70 +161,44 @@ function updateKeys(){
 function checkKeys(){
     
     //console.log(playerCount + currentState.a + "->" + newState.a);
-    
-    if(newState.up != currentState.up){
-        if(newState.up){
-         mc.keyHold("up");
-        } else {
-         mc.keyRelease("up");
+    if(newState.direction != currentState.direction){
+        if(currentState.direction == -1){
+            mc.keyRelease("left");
+            if(currentState.direction == 1){
+                mc.keyHold("right");   
+            }
+        } else if(currentState.direction == 0){
+            if(currentState.direction == -1){
+                mc.keyHold("left");   
+            } else if(currentState.direction == 1){
+                mc.keyHold("right");   
+            }
+        } else if(currentState.direction == 1){
+            mc.keyRelease("right");
+            if(currentState.direction == -1){
+                mc.keyHold("left");   
+            }
         }
     }
     
-    if(newState.down != currentState.down){
-        if(newState.down){
-         mc.keyHold("down");
-        } else {
-         mc.keyRelease("down");
-        }
-    }
     
-    if(newState.left != currentState.left){
-        if(newState.left){
-         mc.keyHold("left");
-        } else {
-         mc.keyRelease("left");
-        }
-    }
-    
-    if(newState.right != currentState.right){
-        if(newState.right){
-         mc.keyHold("right");
-        } else {
-         mc.keyRelease("right");
-        }
-    }
-    
-    if(newState.a != currentState.a){
-        if(newState.a){
-         mc.keyHold("x");
-        } else {
-         mc.keyRelease("x");
-        }
-    }
-    
-    if(newState.b != currentState.b){
-        if(newState.b){
+    if(newState.accelerate != currentState.accelerate){
+        if(newState.accelerate){
          mc.keyHold("z");
         } else {
          mc.keyRelease("z");
         }
     }
     
-    if(newState.start != currentState.start){
-        if(newState.start){
-         mc.keyHold("enter");
+    if(newState.drift != currentState.drift){
+        if(newState.drift){
+         mc.keyHold("x");
         } else {
-         mc.keyRelease("enter");
+         mc.keyRelease("x");
         }
     }
     
-    if(newState.select != currentState.select){
-        if(newState.select){
-         mc.keyHold("shift");
-        } else {
-         mc.keyRelease("shift");
-        }
-    }
+    
 
     currentState= newState;
     
