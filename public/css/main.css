@@ -67,3 +67,10 @@ html, body {
     background:#2ecc71;
     color:#ffffff;
 }
+
+@media screen and (orientation: landscape) and (min-width: 1024px) {
+    .commands {
+        margin-top: 400px;
+        padding: 0 50px;
+    }
+}

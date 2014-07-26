@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
     //grab all the frontend controller variables
     var left = $('.left');
     var right = $('.right');
