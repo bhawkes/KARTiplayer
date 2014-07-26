@@ -68,7 +68,7 @@ io.sockets.on('connection', function(socket){
 
 setInterval(function(){
     updateKeys();
-},50);
+},100);
 
 
 setInterval(function(){

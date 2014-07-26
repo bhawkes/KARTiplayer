@@ -61,7 +61,7 @@ $(document).ready(function(){
 			else if (orient == 180) percent = ((((-gamma+90))/180)*200)-100;
 			else {percent = ((((gamma+90))/180)*200)-100;}
 
-            var threshold = 30;
+            var threshold = 25;
         
             if(percent < -threshold){
             	 keys.direction = -1;
@@ -95,7 +95,7 @@ $(document).ready(function(){
     function loop() {
     	sendKeyState();
 
-    	setTimeout(loop,50);
+    	setTimeout(loop,100);
     }
 
     function sendKeyState() {
