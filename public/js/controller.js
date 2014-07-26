@@ -33,7 +33,7 @@ $(document).ready(function(){
 			else if (orient == 180) percent = ((((-gamma+90))/180)*200)-100;
 			else {percent = ((((gamma+90))/180)*200)-100;}
 
-            var threshold = 15;
+            var threshold = 30;
         
             if(percent < -threshold){
             	 keys.direction = -1;
@@ -42,8 +42,6 @@ $(document).ready(function(){
             } else {
             	keys.direction = 0;
             }
-        
-            $('body').html('<h1>'+keys.direction+'</h1>');
         }
 
     $('.accelerate').on('touchstart',function(e){
