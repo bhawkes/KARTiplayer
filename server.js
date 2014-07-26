@@ -21,7 +21,9 @@ var players = {};
 var currentState = {
     "direction":0,
     "accelerate":false,
-    "drift":false
+    "drift":false,
+    "item":false,
+    "vote":0
 };
 
 var newState = {};
@@ -39,15 +41,19 @@ io.sockets.on('connection', function(socket){
             "direction":0,
             "accelerate":false,
             "drift":false
-        }
+        },
+        vote:false
     };
 
     socket.on('keys', function(data){
         
         players[socket.id].keys = data;
-        updateKeys();
+    });
+    
+    socket.on('vote', function(data){
         
-        console.log(data.direction);
+        players[socket.id].vote = true;
+        
     });
 
     socket.on('disconnect', function(){
@@ -58,6 +64,25 @@ io.sockets.on('connection', function(socket){
 
 });
 
+setInterval(function(){
+    updateKeys();
+},50);
+
+
+setInterval(function(){
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+},1000);
+
+
 
 function updateKeys(){
     // set counts to 0
@@ -66,7 +91,7 @@ function updateKeys(){
     var rightCount = 0;
     var accelerateCount = 0;
     var driftCount = 0;
-        
+    
     // then count each player pressing a button
     for ( var id in players) {
             
@@ -83,63 +108,50 @@ function updateKeys(){
         if(player.keys.accelerate) accelerateCount++;
         
         if(player.keys.drift) driftCount++;
-                	
+        
     }
     
     newState = {};
     
-    if(leftCount == neutralCount){
-          if(leftCount == rightCount){
-                //console.log('l = n = r');
-                newState.direction = 0;
+    if(neutralCount == leftCount) {
+        if(rightCount > neutralCount){
+            newState.direction = 1;
         } else {
-                if(rightCount> leftCount){
-                    //console.log('l = n < r');
-                    newState.direction = 0;
-                } else if(rightCount < leftCount){
-                    //console.log('l = n > r');
-                    newState.direction = 0;
-                }    
-            } 
-    } else if(leftCount == rightCount){
-            if(neutralCount > leftCount){
-                //console.log('l = r < n');
-                newState.direction = 0;
-            } else if(neutralCount < leftCount){
-                console.log('l = r > n');
-                newState.direction = 0;
-            }    
-    } else if(neutralCount == rightCount) {
-             if(leftCount > neutralCount){
-                //console.log('n = r < l');
-                 newState.direction = 0;
-            } else if(leftCount < neutralCount){
-                //console.log('n = r > l');
-                newState.direction = 0;
-            }     
+            newState.direction = 0;
+        }
+    }
+    else if(neutralCount == rightCount) {
+        if(leftCount > neutralCount){
+            newState.direction = -1;
+        } else {
+            newState.direction = 0;
+        }
+    }
+    else if(leftCount == rightCount) newState.direction = 0;
+    else if(leftCount > rightCount) {
+        if(leftCount > neutralCount){
+            newState.direction = -1;
+        } else {
+            newState.direction = 0;
+        }
+    }
+    else if(rightCount > leftCount){
+        if(rightCount > neutralCount){
+            newState.direction = 1;
+        } else {
+            newState.direction = 0;
+        }
     } else {
-            if(leftCount > neutralCount){
-                if(leftCount > rightCount){
-                    //console.log('l > n & r');
-                    newState.direction = -1;
-                }
-            } else if(neutralCount > leftCount){
-                if(neutralCount > rightCount){
-                    //console.log('n > l & r');
-                    newState.direction = 0;
-                }
-            } else if(rightCount > leftCount){
-                if(rightCount > neutralCount){
-                   //console.log('r > l & n');
-                    newState.direction = 1;
-                }
-            }
+        newState.direction = 0;
     }
     
+    //console.log(leftCount,neutralCount,rightCount)
+    //console.log(newState.direction);
+        
     newState.accelerate = (accelerateCount / playerCount) >= threshold ? true : false;
     newState.drift = (driftCount / playerCount) >= threshold ? true : false;
     
-    //checkKeys();
+    checkKeys();
     
     
     // create object ready for sending to clients
@@ -150,7 +162,9 @@ function updateKeys(){
                 "neutral":Math.round((neutralCount / playerCount)*100),
                 "right":Math.round((rightCount / playerCount)*100),
                 "accelerate":Math.round((accelerateCount / playerCount)*100),
-                "drift":Math.round((driftCount / playerCount)*100)
+                "drift":Math.round((driftCount / playerCount)*100),
+                "item":"banana",
+                "vote":[0,playerCount]
             }
         }
         
@@ -164,21 +178,24 @@ function updateKeys(){
 function checkKeys(){
     
     //console.log(playerCount + currentState.a + "->" + newState.a);
-    if(newState.direction != currentState.direction){
+    if(newState.direction !== currentState.direction){
+        
+        console.log(newState.direction,currentState.direction);
+        
         if(currentState.direction == -1){
             mc.keyRelease("left");
-            if(currentState.direction == 1){
+            if(newState.direction == 1){
                 mc.keyHold("right");   
             }
         } else if(currentState.direction == 0){
-            if(currentState.direction == -1){
+            if(newState.direction == -1){
                 mc.keyHold("left");   
-            } else if(currentState.direction == 1){
+            } else if(newState.direction == 1){
                 mc.keyHold("right");   
             }
         } else if(currentState.direction == 1){
             mc.keyRelease("right");
-            if(currentState.direction == -1){
+            if(newState.direction == -1){
                 mc.keyHold("left");   
             }
         }
@@ -203,6 +220,6 @@ function checkKeys(){
     
     
 
-    currentState= newState;
+    currentState = newState;
     
 }
