@@ -9,8 +9,8 @@ $(document).ready(function(){
 
 	var keys = {
                 'direction': 0,
-                'accelerate': false
-                'drift': false
+                'accelerate': false,
+                'drift': false;
             };
 
     var alpha = 0,
