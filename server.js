@@ -1,8 +1,10 @@
 var express = require('express'),
 	app = express(),
 	server = require('http').createServer(app),
+    fs = require('fs'),
 	io = require('socket.io').listen(server),
-    mc = require("mac-control");
+    mc = require("mac-control"),
+    Screeen = require("screeen");
 
 server.listen(3000);
 
@@ -74,9 +76,15 @@ setInterval(function(){
     
     
     
+/*
+    // without callback
+    var w = fs.createWriteStream('test2.jpg');
+    Screeen.capture({rect:[0,0,100,100]}).on('captured',function(path){
+      // path is TEMPORARY FILE PATH
+      fs.createReadStream(path).pipe(w);
+    });
     
-    
-    
+  */  
     
     
     
@@ -158,6 +166,7 @@ function updateKeys(){
     var democracy = {
         	"playerCount": playerCount,
         	"percentage":{
+                "direction":currentState.direction,
                 "left":Math.round((leftCount / playerCount)*100),
                 "neutral":Math.round((neutralCount / playerCount)*100),
                 "right":Math.round((rightCount / playerCount)*100),
