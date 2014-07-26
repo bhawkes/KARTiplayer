@@ -16,19 +16,19 @@ $(document).ready(function(){
 
         //check if they are grater than 50% and add most voted
 
-        if (data.currentState.direction == -1 ) {
+        if (data.percentage.direction == -1 ) {
             left.addClass('most-voted');
         } else {
             left.removeClass('most-voted');
         }
 
-        if (data.currentState.direction == 1 ) {
+        if (data.percentage.direction == 1 ) {
             right.addClass('most-voted');
         } else {
             right.removeClass('most-voted');
         }
 
-        if (data.currentState.direction == 0 ) {
+        if (data.percentage.direction == 0 ) {
             neutral.addClass('most-voted');
         } else {
             neutral.removeClass('most-voted');
