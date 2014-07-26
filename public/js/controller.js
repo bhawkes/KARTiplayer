@@ -46,6 +46,26 @@ $(document).ready(function(){
             $('body').html('<h1>'+keys.direction+'</h1>');
         }
 
+    $('.accelerate').on('touchstart',function(e){
+        e.preventDefault();
+        keys.accelerate = true;
+    });
+
+    $('.accelerate').on('touchend',function(e){
+        e.preventDefault();
+        keys.accelerate = false;
+    });
+
+    $('.drift').on('touchstart',function(e){
+        e.preventDefault();
+        keys.drift = true;
+    });
+
+    $('.drift').on('touchend',function(e){
+        e.preventDefault();
+        keys.drift = false;
+    });
+
     function loop() {
     	sendKeyState();
 

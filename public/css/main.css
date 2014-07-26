@@ -2,91 +2,64 @@
     -webkit-user-select:none;
     user-select:none;
     overflow: hidden;
-}
-
-#nes-controller {
-    vertical-align: top;
-}
-
-#up-button {
-    z-index: 50;
+    box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -o-box-sizing:border-box;
+    -ms-box-sizing:border-box;
 }
 
 html, body {
     width: 100%;
     height: 100%;
+    font-family: sans-serif;
 }
 
-#wrapper {
+.wrapper {
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    overflow:hidden;
 }
-.feedback-area {
+
+.steering {
     width: 100%;
-    height: 20%;
-    margin: 0 auto;
-    border-bottom: 1px solid #000000;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    overflow:hidden;
+    position:relative;
+    height:100px;
 }
-.feedback-area .value-div {
-    width: 12.5%;
-    height: 100%;
-    background-color: #DCDCDC;
-    float: left;
-    position: relative;
+
+.left, .neutral, .right {
+    width: 33%;
+    float:left;
+    padding: 45px 0;
+    overflow:hidden;
+    background: #efefef;
+    text-align:center;
 }
-.feedback-area .value-div .inner {
-    position: absolute;
-    bottom: 0;
+
+.most-voted {
+    background: #3498db;
+    color:#ffffff;
+}
+
+.commands {
     width: 100%;
-    background-color: #DCDCDC;
-    -webkit-transition: height 0.4s; /* For Safari 3.1 to 6.0 */
-    transition: height 0.4s;
-    height: 0%;
+    overflow:hidden;
 }
 
-.feedback-area #value-up .inner { background-color: #FF0700; }
-.feedback-area #value-down .inner { background-color: #BF3330; }
-.feedback-area #value-left .inner { background-color: #A60400; }
-.feedback-area #value-right .inner { background-color: #FF4540; }
-.feedback-area #value-a .inner { background-color: #FF7673; }
-.feedback-area #value-b .inner { background-color: #FF4900; }
-.feedback-area #value-start .inner { background-color: #BF5930; }
-.feedback-area #value-select .inner { background-color: #A62F00; }
-
-.feedback-area .value-div .icon {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-size: 100% auto;
-    background-repeat:no-repeat;
-    background-position: center center;
+.drift {
+    float:left;
+    width: 25%;
+    text-align:center;
+    padding: 50px 0;
+    background:#34495e;
+    color:#ffffff;
 }
 
-.feedback-area #value-up .icon { background-image: url('../images/up.png'); }
-.feedback-area #value-down .icon { background-image: url('../images/down.png'); }
-.feedback-area #value-left .icon { background-image: url('../images/left.png'); }
-.feedback-area #value-right .icon { background-image: url('../images/right.png'); }
-.feedback-area #value-a .icon { background-image: url('../images/a.png'); }
-.feedback-area #value-b .icon { background-image: url('../images/b.png'); }
-.feedback-area #value-start .icon { background-image: url('../images/start.png'); }
-.feedback-area #value-select .icon { background-image: url('../images/select.png'); }
-
-.controller-area {
-    width: 100%;
-    height: 80%;
-}
-
-
-@media (max-width: 700px) {
-    .feedback-area {
-        display: none;
-    }
-    .controller-area {
-        height: 100%;
-    }
+.accelerate {
+    float:left;
+    width: 75%;
+    text-align:center;
+    padding: 50px 0;
+    background:#2ecc71;
+    color:#ffffff;
 }
