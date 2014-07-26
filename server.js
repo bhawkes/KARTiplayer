@@ -2,6 +2,7 @@ var express = require('express'),
 	app = express(),
 	server = require('http').createServer(app),
     fs = require('fs'),
+    gm = require('gm'),
 	io = require('socket.io').listen(server),
     mc = require("mac-control"),
     Screeen = require("screeen");
@@ -54,7 +55,9 @@ io.sockets.on('connection', function(socket){
     
     socket.on('vote', function(data){
         
-        players[socket.id].vote = true;
+        //players[socket.id].vote = true;
+        
+        vote();
         
     });
 
@@ -70,21 +73,86 @@ setInterval(function(){
     updateKeys();
 },100);
 
+var powerup = false;
+
+var voteCount = 0;
+
+function vote(){
+    voteCount++
+    
+    if(voteCount >= playerCount/2){
+        voteCount = 0;
+        mc.keypress("x");
+    }
+        
+}
 
 setInterval(function(){
-    
-    
-    
-    
-/*
+        
     // without callback
-    var w = fs.createWriteStream('test2.jpg');
-    Screeen.capture({rect:[0,0,100,100]}).on('captured',function(path){
+    var w = fs.createWriteStream('test.jpg');
+    Screeen.capture({rect:[617,23,50,50]}).on('captured',function(path){
       // path is TEMPORARY FILE PATH
       fs.createReadStream(path).pipe(w);
+            
+        
+        
+        gm.compare('test.jpg', 'mushroom.jpg',0, function (err, isEqual, equality, raw) {
+            if(isEqual){powerup = 'mushroom';
+            } else {
+                gm.compare('test.jpg', 'banana.jpg',0, function (err, isEqual, equality, raw) {
+                    if(isEqual){powerup = 'banana';
+                    } else {
+                        gm.compare('test.jpg', 'bolt.jpg',0, function (err, isEqual, equality, raw) {
+                            if(isEqual){powerup = 'bolt';
+                            } else {
+                                gm.compare('test.jpg', 'coin.jpg',0, function (err, isEqual, equality, raw) {
+                                    if(isEqual){powerup = 'coin';
+                                    } else {
+                                        gm.compare('test.jpg', 'feather.jpg',0, function (err, isEqual, equality, raw) {
+                                            if(isEqual){powerup = 'feather';
+                                            } else {
+                                                gm.compare('test.jpg', 'greenshell.jpg',0, function (err, isEqual, equality, raw) {
+                                                    if(isEqual){powerup = 'greenshell';
+                                                    } else {
+                                                        gm.compare('test.jpg', 'redshell.jpg',0, function (err, isEqual, equality, raw) {
+                                                            if(isEqual){powerup = 'redshell';
+                                                            } else {
+                                                                gm.compare('test.jpg', 'star.jpg',0, function (err, isEqual, equality, raw) {
+                                                                    if(isEqual){powerup = 'star';
+                                                                    } else {
+                                                                        powerup = false;
+                                                                    }
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+            
+        console.log(powerup);
+        
+          
+        
+            
+        
     });
-    
-  */  
+    /*
+    Screeen.capture({rect:[617,23,50,50],type:'jpg',data:'path.jpg'}, function(err,data){
+  // data is BINARY data
+  if(err) return console.log(err);
+  fs.writeFileSync('test.jpg', data, {encoding:'binary'});
+});
+    */
     
     
     
@@ -172,7 +240,7 @@ function updateKeys(){
                 "right":Math.round((rightCount / playerCount)*100),
                 "accelerate":Math.round((accelerateCount / playerCount)*100),
                 "drift":Math.round((driftCount / playerCount)*100),
-                "item":"banana",
+                "item":powerup,
                 "vote":[0,playerCount]
             }
         }
@@ -219,6 +287,7 @@ function checkKeys(){
         }
     }
     
+    /*
     if(newState.drift != currentState.drift){
         if(newState.drift){
          mc.keyHold("x");
@@ -226,7 +295,7 @@ function checkKeys(){
          mc.keyRelease("x");
         }
     }
-    
+    */
     
 
     currentState = newState;
