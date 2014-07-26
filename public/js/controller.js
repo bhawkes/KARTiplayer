@@ -7,11 +7,25 @@ $(document).ready(function(){
 	//Grab the socket connection
 	var socket = io.connect(window.location.hostname);
 
+    var loaded = null;
+    
 	socket.on('democracy',function(data){
         //update the width of the frontend
         left.css('width',data.percentage.left + "%");
         right.css('width',data.percentage.right + "%");
         neutral.css('width',data.percentage.neutral + "%");
+        
+        if(data.percentage.item!== loaded){
+        
+            loaded = data.percentage.item
+            
+            if(!data.percentage.item){
+                $('.drift').html('<img height="48"  width="48" src="images/?.jpg">');
+            } else {
+                $('.drift').html('<img  height="48"  width="48" src="images/'+data.percentage.item+'.jpg">');
+            }
+        
+        }
 
         //check if they are grater than 50% and add most voted
 
@@ -85,10 +99,15 @@ $(document).ready(function(){
         e.preventDefault();
         keys.drift = true;
     });
+    
 
     $('.drift').on('touchend',function(e){
         e.preventDefault();
         keys.drift = false;
+    });
+    
+    $('.drift img').on('touchstart',function(e){
+        e.preventDefault();
     });
 
     function loop() {

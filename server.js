@@ -55,9 +55,12 @@ io.sockets.on('connection', function(socket){
     
     socket.on('vote', function(data){
         
-        //players[socket.id].vote = true;
-        
-        vote();
+        voteCount++
+    
+    if(voteCount >= playerCount/2){
+        voteCount = 0;
+        //mc.keyPress("x");
+    }
         
     });
 
@@ -77,15 +80,6 @@ var powerup = false;
 
 var voteCount = 0;
 
-function vote(){
-    voteCount++
-    
-    if(voteCount >= playerCount/2){
-        voteCount = 0;
-        mc.keypress("x");
-    }
-        
-}
 
 setInterval(function(){
         
@@ -287,7 +281,7 @@ function checkKeys(){
         }
     }
     
-    /*
+    
     if(newState.drift != currentState.drift){
         if(newState.drift){
          mc.keyHold("x");
@@ -295,7 +289,7 @@ function checkKeys(){
          mc.keyRelease("x");
         }
     }
-    */
+    
     
 
     currentState = newState;
